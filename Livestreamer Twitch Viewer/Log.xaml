@@ -1,0 +1,15 @@
+﻿<Window x:Class="Livestreamer_Twitch_Viewer.Log"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Livestreamer_Twitch_Viewer"
+        mc:Ignorable="d"
+        Title="Log" Height="300" Width="300">
+    <Grid>
+        <PasswordBox x:Name="AuthKeyBox" HorizontalAlignment="Center" Margin="0,30,0,0" VerticalAlignment="Top" Height="50" Width="250"/>
+        <Button x:Name="button" Content="Validate" HorizontalAlignment="Center" Margin="0,125,150,0" VerticalAlignment="Top" Width="95" Click="button_Click" Height="20"/>
+        <Button x:Name="button1" Content="Generate" HorizontalAlignment="Center" Margin="0,190,150,0" VerticalAlignment="Top" Width="95" Click="button1_Click" Height="20"/>
+        <Button x:Name="remove" Content="Remove registered key" Width="119" HorizontalAlignment="Center" VerticalAlignment="Top" Height="20" Margin="130,190,0,0" FontSize="10" Click="remove_Click"/>
+    </Grid>
+</Window>

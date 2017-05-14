@@ -1,0 +1,36 @@
+﻿<Window x:Class="LivestreamerTwitchViewer.Scroll"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:LivestreamerTwitchViewer"
+        mc:Ignorable="d"
+        SizeChanged="update_size"
+        Title="Livestreamer Twitch Viewer" Height="980" Width="1720">
+    <DockPanel x:Name="fullPanel" Width="1700" Height="940" Margin="0,10,0,0">
+        <StackPanel x:Name="panelLeft" Width="250" HorizontalAlignment="Left">
+            <DockPanel Height="50" VerticalAlignment="Top" Margin="0" LastChildFill="False">
+                <TextBlock x:Name="textBlock" Text="Quality :" Width="90" VerticalAlignment="Center" Height="30" FontSize="20" FontWeight="Bold" FontStyle="Italic" Margin="0" TextAlignment="Right" HorizontalAlignment="Left"/>
+                <ComboBox x:Name="Quality" Height="30" Width="90" Margin="10,0,0,0" SelectionChanged="Quality_SelectionChanged" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="16" FontStyle="Italic" FontWeight="Bold"/>
+                <Button x:Name="qualityAdder" Content="Add" Width="40" Height="30" Margin="10,0,0,0" FontWeight="Bold" Click="qualityAdder_Click"/>
+            </DockPanel>
+            <Button x:Name="button" Content="Refresh Streams" Height="50" Click="button_Click" FontSize="20" FontWeight="Bold"/>
+            <TextBox x:Name="textBoxStream" GotFocus="TextBox_GotFocus" LostFocus="TextBox_LostFocus" Height="50" Text="Enter Channel Name:" Margin="0" FontSize="20" FontWeight="Bold" FontFamily="Segoe UI Emoji" FontStyle="Italic"/>
+            <Button x:Name="button1" Content="Start" Margin="0" Height="50" Click="button1_Click" FontSize="24" FontWeight="Bold"/>
+            <TextBox x:Name="textBoxStreamChat" GotFocus="TextBox_GotFocus" LostFocus="TextBox_LostFocusChat" Height="50" Text="Chat Room Name:" Margin="0" FontSize="20" FontWeight="Bold" FontFamily="Segoe UI Emoji" FontStyle="Italic"/>
+            <Button x:Name="loadChat" Content="Load Chat Room" Margin="0" Height="50" Click="loadChat_Click" FontSize="24" FontWeight="Bold"/>
+            <DockPanel x:Name="PanelChat">
+                <Button Width="10" Click="Resize" Margin="0" HorizontalAlignment="Left"/>
+                <WebBrowser x:Name="TwitchChatBrowser" Source="{x:Null}" AllowDrop="False" Margin="0" Width="240" HorizontalAlignment="Left" VerticalAlignment="Top" Height="630" />
+            </DockPanel>
+        </StackPanel>
+        <ScrollViewer x:Name="scrollStream" Margin="10,0,0,0" HorizontalAlignment="Left">
+            <DockPanel x:Name="streamPanel" HorizontalAlignment="Left">
+                <StackPanel x:Name="panelRight1" Height="5000" VerticalAlignment="Top" HorizontalAlignment="Left" Width="345"/>
+                <StackPanel x:Name="panelRight2" Height="5000" VerticalAlignment="Top" HorizontalAlignment="Left" Width="345" Margin="10,0,0,0"/>
+                <StackPanel x:Name="panelRight3" Height="5000" VerticalAlignment="Top" HorizontalAlignment="Left" Width="345" Margin="10,0,0,0"/>
+                <StackPanel x:Name="panelRight4" Height="5000" VerticalAlignment="Top" HorizontalAlignment="Left" Width="345" Margin="10,0"/>
+            </DockPanel>
+        </ScrollViewer>
+    </DockPanel>
+</Window>
