@@ -58,3 +58,6 @@ C:\Users\admin.20163428-ALTEN\Desktop\T\Livestreamer Twitch Viewer\Livestreamer 
 C:\Users\Yami_no_Neko\documents\visual studio 2015\Projects\Livestreamer Twitch Viewer\Livestreamer Twitch Viewer\obj\Debug\Quality.g.cs
 C:\Users\Yami_no_Neko\documents\visual studio 2015\Projects\Livestreamer Twitch Viewer\Livestreamer Twitch Viewer\obj\Debug\Quality.baml
 C:\Users\Yami_no_Neko\documents\visual studio 2015\Projects\Livestreamer Twitch Viewer\Livestreamer Twitch Viewer\bin\Debug\TwitchCSharp.dll
+C:\Users\Yami_no_Neko\Documents\Visual Studio 2015\Projects\Livestreamer-Twitch-Viewer\Livestreamer Twitch Viewer\bin\Debug\LivestreamerTwitchViewer.exe.config
+C:\Users\Yami_no_Neko\Documents\Visual Studio 2015\Projects\Livestreamer-Twitch-Viewer\Livestreamer Twitch Viewer\obj\Debug\LivestreamerTwitchViewer.exe
+C:\Users\Yami_no_Neko\Documents\Visual Studio 2015\Projects\Livestreamer-Twitch-Viewer\Livestreamer Twitch Viewer\obj\Debug\LivestreamerTwitchViewer.pdb

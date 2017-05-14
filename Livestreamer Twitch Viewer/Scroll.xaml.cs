@@ -30,7 +30,7 @@ namespace LivestreamerTwitchViewer
             InitializeComponent();
             InitWindow();
             Refresh();
-            AddItemsToComboQuality();
+            AddItemsToComboQuality(); //Some Changes
         }
 
         private void AddItemsToComboQuality()
