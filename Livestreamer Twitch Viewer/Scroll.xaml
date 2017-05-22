@@ -12,9 +12,10 @@
             <DockPanel Height="50" VerticalAlignment="Top" Margin="0" LastChildFill="False">
                 <TextBlock x:Name="textBlock" Text="Quality :" Width="90" VerticalAlignment="Center" Height="30" FontSize="20" FontWeight="Bold" FontStyle="Italic" Margin="0" TextAlignment="Right" HorizontalAlignment="Left"/>
                 <ComboBox x:Name="Quality" Height="30" Width="90" Margin="10,0,0,0" SelectionChanged="Quality_SelectionChanged" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="16" FontStyle="Italic" FontWeight="Bold"/>
-                <Button x:Name="qualityAdder" Content="Add" Width="40" Height="30" Margin="10,0,0,0" FontWeight="Bold" Click="qualityAdder_Click"/>
+                <Button x:Name="qualityAdder" Content="Add" Width="40" Height="30" Margin="10,0,0,0" FontWeight="Bold" Click="qualityAdder_Click" FontSize="16"/>
             </DockPanel>
-            <Button x:Name="button" Content="Refresh Streams" Height="50" Click="button_Click" FontSize="20" FontWeight="Bold"/>
+            <Button x:Name="button" Content="Refresh Streams" Height="50" Click="button_Click" FontSize="24" FontWeight="Bold"/>
+            <Button x:Name="host" Content="Refresh Hosts" Margin="0" Height="50" Click="loadHost_Click" FontSize="24" FontWeight="Bold"/>
             <TextBox x:Name="textBoxStream" GotFocus="TextBox_GotFocus" LostFocus="TextBox_LostFocus" Height="50" Text="Enter Channel Name:" Margin="0" FontSize="20" FontWeight="Bold" FontFamily="Segoe UI Emoji" FontStyle="Italic"/>
             <Button x:Name="button1" Content="Start" Margin="0" Height="50" Click="button1_Click" FontSize="24" FontWeight="Bold"/>
             <TextBox x:Name="textBoxStreamChat" GotFocus="TextBox_GotFocus" LostFocus="TextBox_LostFocusChat" Height="50" Text="Chat Room Name:" Margin="0" FontSize="20" FontWeight="Bold" FontFamily="Segoe UI Emoji" FontStyle="Italic"/>
@@ -24,13 +25,27 @@
                 <WebBrowser x:Name="TwitchChatBrowser" Source="{x:Null}" AllowDrop="False" Margin="0" Width="240" HorizontalAlignment="Left" VerticalAlignment="Top" Height="630" />
             </DockPanel>
         </StackPanel>
-        <ScrollViewer x:Name="scrollStream" Margin="10,0,0,0" HorizontalAlignment="Left">
-            <DockPanel x:Name="streamPanel" HorizontalAlignment="Left">
-                <StackPanel x:Name="panelRight1" Height="5000" VerticalAlignment="Top" HorizontalAlignment="Left" Width="345"/>
-                <StackPanel x:Name="panelRight2" Height="5000" VerticalAlignment="Top" HorizontalAlignment="Left" Width="345" Margin="10,0,0,0"/>
-                <StackPanel x:Name="panelRight3" Height="5000" VerticalAlignment="Top" HorizontalAlignment="Left" Width="345" Margin="10,0,0,0"/>
-                <StackPanel x:Name="panelRight4" Height="5000" VerticalAlignment="Top" HorizontalAlignment="Left" Width="345" Margin="10,0"/>
-            </DockPanel>
-        </ScrollViewer>
+        <TabControl>
+            <TabItem x:Name="channelTab" Header="Channels" Height="30" Width="80" Margin="-2,0,0,0" HorizontalAlignment="Left" FontWeight="Bold" FontSize="16">
+                <ScrollViewer x:Name="scrollStream" Margin="10,0,0,0" HorizontalAlignment="Left">
+                    <DockPanel x:Name="streamPanel" HorizontalAlignment="Left">
+                        <StackPanel x:Name="panelRight1" Height="5000" VerticalAlignment="Top" HorizontalAlignment="Left" Width="345"/>
+                        <StackPanel x:Name="panelRight2" Height="5000" VerticalAlignment="Top" HorizontalAlignment="Left" Width="345" Margin="10,0,0,0"/>
+                        <StackPanel x:Name="panelRight3" Height="5000" VerticalAlignment="Top" HorizontalAlignment="Left" Width="345" Margin="10,0,0,0"/>
+                        <StackPanel x:Name="panelRight4" Height="5000" VerticalAlignment="Top" HorizontalAlignment="Left" Width="345" Margin="10,0"/>
+                    </DockPanel>
+                </ScrollViewer>
+            </TabItem>
+            <TabItem x:Name="hostTab" Header="Hosts" Width="80" Height="30" HorizontalAlignment="Left" Margin="-2,0,0,0" FontWeight="Bold" FontSize="16">
+                <ScrollViewer x:Name="scrollStreamHost" Margin="10,0,0,0" HorizontalAlignment="Left">
+                    <DockPanel x:Name="streamPanelHost" HorizontalAlignment="Left">
+                        <StackPanel x:Name="panelHostRight1" Height="5000" VerticalAlignment="Top" HorizontalAlignment="Left" Width="345"/>
+                        <StackPanel x:Name="panelHostRight2" Height="5000" VerticalAlignment="Top" HorizontalAlignment="Left" Width="345" Margin="10,0,0,0"/>
+                        <StackPanel x:Name="panelHostRight3" Height="5000" VerticalAlignment="Top" HorizontalAlignment="Left" Width="345" Margin="10,0,0,0"/>
+                        <StackPanel x:Name="panelHostRight4" Height="5000" VerticalAlignment="Top" HorizontalAlignment="Left" Width="345" Margin="10,0"/>
+                    </DockPanel>
+                </ScrollViewer>
+            </TabItem>
+        </TabControl>
     </DockPanel>
 </Window>

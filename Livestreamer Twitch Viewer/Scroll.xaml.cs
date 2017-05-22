@@ -1,7 +1,12 @@
 ﻿using Livestreamer_Twitch_Viewer;
+using LivestreamerTwitchViewer.Models;
+using LivestreamerTwitchViewer.Client;
+using Newtonsoft.Json;
+using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Net;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -10,29 +15,83 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using TwitchCSharp.Clients;
 using TwitchCSharp.Models;
+using SimpleJSON;
 using static System.String;
 using MSG = System.Windows.MessageBox;
-
+using TwitchCSharp.Helpers;
+using System.Collections;
+using System.Windows.Threading;
+using System.Threading.Tasks;
+using LivestreamerTwitchViewer.V5;
+using System.Linq;
 
 namespace LivestreamerTwitchViewer
 {
     /// <summary>
     /// Logique d'interaction pour Scroll.xaml
     /// </summary>
+
     public partial class Scroll : Window
     {
 
-        public TwitchList<Stream> followed;
+        //public TwitchList<Stream> followed;
         private bool toClose = false;
+        private int m_offset = 0;
 
         public Scroll()
         {
             InitializeComponent();
             InitWindow();
             Refresh();
-            AddItemsToComboQuality(); //Some Changes
+            AddItemsToComboQuality();
+            //Toto();
+            //System.Windows.Interop.ComponentDispatcher.ThreadIdle += new EventHandler(Update2);
         }
 
+        async void Toto()
+        {
+            await Globals.AClient.GetHostedStreams(m_offset);            
+        }
+
+        async void SetTotalFollowed()
+        {
+            Globals.TotalFollowed = await AuthenticatedClient.GetTotalFollowed();
+        }
+
+        async void Update(object sender, EventArgs e)
+        {
+            if (m_offset < 11)
+            {
+                await Globals.AClient.GetHostedStreams(m_offset);
+                m_offset++;
+            }
+        }
+
+        public void Update2(object sender, EventArgs e)
+        {
+            Console.WriteLine("COUNT  " + AuthenticatedClient.HostStreamsList.Count);
+            if (AuthenticatedClient.HostStreamsList[AuthenticatedClient.HostStreamsList.Count - 1].StreamResult.Status != TaskStatus.WaitingForActivation)
+            {
+                Console.WriteLine("DONE  " + AuthenticatedClient.HostStreamsList.Count);
+                AuthenticatedClient.stackMax = 0;
+
+                AuthenticatedClient.t1 = DateTime.Now.TimeOfDay.TotalMilliseconds;
+                Console.WriteLine("t1 : " + AuthenticatedClient.t1);
+                AuthenticatedClient.delta = AuthenticatedClient.t1 - AuthenticatedClient.t0;
+                Console.WriteLine("Delta Time : " + AuthenticatedClient.delta);
+
+                System.Windows.Interop.ComponentDispatcher.ThreadIdle -= new EventHandler(Update2);
+                RemoveStackElement(true);
+                //TwitchList<Stream> followed = HostreamToStreamList(AuthenticatedClient.HostStreamsList);
+                TwitchList<Stream> followed = new TwitchList<Stream>();
+                followed.List = AuthenticatedClient.HostStreamsList.Select(hostStream => hostStream.Stream).ToList();
+                //List<Book> books_2 = books_1.Select(book => new Book(book.title)).ToList();
+                RefreshStreamPanel(followed, true);
+
+            }
+        }
+
+        #region Quality
         private void AddItemsToComboQuality()
         {
             if (System.IO.File.Exists(AppDomain.CurrentDomain.BaseDirectory + "Qualities.txt"))
@@ -45,7 +104,34 @@ namespace LivestreamerTwitchViewer
                 Quality.SelectedItem = Quality.Items[0];
             }
         }
-        
+
+        private void Quality_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            Globals.Quality = " " + e.AddedItems[0];
+        }
+
+        private void qualityAdder_Click(object sender, RoutedEventArgs e)
+        {
+            Quality win = new Quality();
+            bool? res = win.ShowDialog();
+            if ((res != null) || (res == true))
+            {
+                if (win.Result != null && win.Result != "")
+                {
+                    if (!System.IO.File.Exists(AppDomain.CurrentDomain.BaseDirectory + "Qualities.txt"))
+                    {
+                        System.IO.File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + "Qualities.txt", win.Result + Environment.NewLine);
+                    }
+                    else
+                    {
+                        System.IO.File.AppendAllText(AppDomain.CurrentDomain.BaseDirectory + "Qualities.txt", win.Result + Environment.NewLine);
+                    }
+                    Quality.Items.Add(win.Result);
+                }
+            }
+        }
+        #endregion
+
         private void InitWindow()
         {
             //setup webbrowser
@@ -79,6 +165,9 @@ namespace LivestreamerTwitchViewer
             }
             MSG.Show("Connected as " + user.Name, "Success", MessageBoxButton.OK, MessageBoxImage.Exclamation);
             Globals.Client = tempClient;
+            Globals.UserId = user.Id;
+            Globals.AClient = new AuthenticatedClient(this);
+            SetTotalFollowed();
             Globals.Status.Username = user.Name;
             Globals.Status.Displayname = user.DisplayName;
             Globals.Quality = " source";
@@ -96,6 +185,7 @@ namespace LivestreamerTwitchViewer
             }
         }
 
+        #region Resizer
         private void update_size(object sender, SizeChangedEventArgs e)
         {
             SetPanelsSizes();
@@ -103,117 +193,203 @@ namespace LivestreamerTwitchViewer
 
         private void SetPanelsSizes()
         {
-            double size = (this.ActualWidth - (double)335) / (double)4;
+            fullPanel.Width = this.ActualWidth - (double)20;
             scrollStream.Width = this.ActualWidth - (double)280;
             streamPanel.Width = this.ActualWidth - (double)280;
-            fullPanel.Width = this.ActualWidth - (double)20;
+            scrollStreamHost.Width = this.ActualWidth - (double)280;
+            streamPanelHost.Width = this.ActualWidth - (double)280;
+            TwitchChatBrowser.Height = this.ActualHeight - (double)350;
+            double size = (this.ActualWidth - (double)335) / (double)4;
             panelRight1.Width = size;
             panelRight2.Width = size;
             panelRight3.Width = size;
             panelRight4.Width = size;
-            TwitchChatBrowser.Height = this.ActualHeight - (double)350;
+            panelHostRight1.Width = size;
+            panelHostRight2.Width = size;
+            panelHostRight3.Width = size;
+            panelHostRight4.Width = size;
         }
+
+        private void Resize(object sender, RoutedEventArgs e)
+        {
+            if (TwitchChatBrowser.Width == 240)
+            {
+                PanelChat.Width = 500;
+                TwitchChatBrowser.Width = 490;
+            }
+            else
+            {
+                PanelChat.Width = 250;
+                TwitchChatBrowser.Width = 240;
+            }
+        }
+        #endregion
 
         private void button_Click(object sender, RoutedEventArgs e)
         {
-            followed = Globals.Client.GetFollowedStreams();
-            //remove elements for refresh
-            removeStackElement();
+            TwitchList<Stream>  followed = Globals.Client.GetFollowedStreams();
+            RemoveStackElement(false);
+            RefreshStreamPanel(followed, false);
+        }
+
+        #region Refresh Elements
+        private void RemoveStackElement(bool p_isHost)
+        {
+            if (p_isHost)
+            {
+                for (int i = panelHostRight1.Children.Count - 1; i >= 0; i--)
+                {
+                    panelHostRight1.Children.RemoveAt(i);
+                }
+                for (int i = panelHostRight2.Children.Count - 1; i >= 0; i--)
+                {
+                    panelHostRight2.Children.RemoveAt(i);
+                }
+                for (int i = panelHostRight3.Children.Count - 1; i >= 0; i--)
+                {
+                    panelHostRight3.Children.RemoveAt(i);
+                }
+                for (int i = panelHostRight4.Children.Count - 1; i >= 0; i--)
+                {
+                    panelHostRight4.Children.RemoveAt(i);
+                }
+            }
+            else
+            {
+                for (int i = panelRight1.Children.Count - 1; i >= 0; i--)
+                {
+                    panelRight1.Children.RemoveAt(i);
+                }
+                for (int i = panelRight2.Children.Count - 1; i >= 0; i--)
+                {
+                    panelRight2.Children.RemoveAt(i);
+                }
+                for (int i = panelRight3.Children.Count - 1; i >= 0; i--)
+                {
+                    panelRight3.Children.RemoveAt(i);
+                }
+                for (int i = panelRight4.Children.Count - 1; i >= 0; i--)
+                {
+                    panelRight4.Children.RemoveAt(i);
+                }
+            }
+        }
+
+        private void RefreshStreamPanel(TwitchList<Stream> followed, bool p_isHost)
+        {
             for (int i = 0; i < followed.List.Count; i++)
             {
-                // Create images preview.
-                System.Windows.Controls.Image img = new System.Windows.Controls.Image();                
-                Uri uri = new Uri(followed.List[i].Preview.Large);
-                BitmapImage bmp = new BitmapImage(uri);
-                img.Source = bmp;
-
-                // Create Images cover.
-                System.Windows.Controls.Image img2 = new System.Windows.Controls.Image();
-                img2.HorizontalAlignment = HorizontalAlignment.Right;
-                img2.VerticalAlignment = VerticalAlignment.Bottom;
-                img2.Stretch = Stretch.None;
-                Console.WriteLine("Game : " + followed.List[i].Game);
-                try
+                Stream stream = followed.List[i];
+                if (stream != null)
                 {
-                    Game game = Globals.Client.SearchGames(followed.List[i].Game).List[0];
-                    img2.ToolTip = game.Name;
-                    Uri uri2 = new Uri(game.Box.Small);
-                    BitmapImage bmp2 = new BitmapImage(uri2);
-                    img2.Source = bmp2;
-                }
-                catch
-                {
-                    img2.ToolTip = "I AM ERROR";
-                    Uri uri2 = new Uri(followed.List[i].Preview.Small);
-                    BitmapImage bmp2 = new BitmapImage(uri2);
-                    img2.Source = bmp2;
-                }                
+                    // Create images preview.
+                    System.Windows.Controls.Image img = new System.Windows.Controls.Image();
+                    string url = stream.Preview.Large;
+                    Uri uri = new Uri(url);
+                    var bmp = new BitmapImage();
+                    bmp.BeginInit();
+                    bmp.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
+                    bmp.UriSource = uri;
+                    bmp.EndInit();
+                    img.Source = bmp;
 
-                // Create grid.
-                Grid grid = new Grid();
-                grid.Margin = new Thickness(0, 10, 0, 0);
-                grid.Children.Add(img);
-                grid.Children.Add(img2);
+                    // Create Images cover.
+                    System.Windows.Controls.Image img2 = new System.Windows.Controls.Image();
+                    img2.HorizontalAlignment = HorizontalAlignment.Right;
+                    img2.VerticalAlignment = VerticalAlignment.Bottom;
+                    img2.Stretch = Stretch.None;
+                    try
+                    {
+                        Game game = Globals.Client.SearchGames(stream.Game).List[0];
+                        img2.ToolTip = game.Name;
+                        Uri uri2 = new Uri(game.Box.Small);
+                        BitmapImage bmp2 = new BitmapImage(uri2);
+                        img2.Source = bmp2;
+                    }
+                    catch
+                    {
+                        img2.ToolTip = "I AM ERROR";
+                        Uri uri2 = new Uri(stream.Preview.Small);
+                        BitmapImage bmp2 = new BitmapImage(uri2);
+                        img2.Source = bmp2;
+                    }
 
-                // Create Textblock
-                TextBlock title = new TextBlock();
-                title.Text = followed.List[i].Channel.Status;
-                title.Height = 40;
-                title.FontSize = 16;
-                title.TextWrapping = TextWrapping.Wrap;
-                title.FontWeight = FontWeights.Bold;
+                    // Create grid.
+                    Grid grid = new Grid();
+                    grid.Margin = new Thickness(0, 10, 0, 0);
+                    grid.Children.Add(img);
+                    grid.Children.Add(img2);
 
-                // Create buttons.
-                Button myButton = new Button();
-                myButton.Content = followed.List[i].Channel.Name;
-                myButton.Click += new RoutedEventHandler(buttonG_Click);
+                    // Create Textblock
+                    TextBlock title = new TextBlock();
+                    title.Text = stream.Channel.Status;
+                    title.Height = 40;
+                    title.FontSize = 16;
+                    title.TextWrapping = TextWrapping.Wrap;
+                    title.FontWeight = FontWeights.Bold;
 
-                // Add image and button in the right panel.
-                switch (i % 4)
-                {
-                    case 0:
-                        panelRight1.Children.Add(grid);
-                        panelRight1.Children.Add(title);
-                        panelRight1.Children.Add(myButton);
-                        break;
-                    case 1:
-                        panelRight2.Children.Add(grid);
-                        panelRight2.Children.Add(title);
-                        panelRight2.Children.Add(myButton);
-                        break;
-                    case 2:
-                        panelRight3.Children.Add(grid);
-                        panelRight3.Children.Add(title);
-                        panelRight3.Children.Add(myButton);
-                        break;
-                    case 3:
-                        panelRight4.Children.Add(grid);
-                        panelRight4.Children.Add(title);
-                        panelRight4.Children.Add(myButton);
-                        break;
+                    // Create buttons.
+                    Button myButton = new Button();
+                    myButton.Content = stream.Channel.Name;
+                    myButton.Click += new RoutedEventHandler(buttonG_Click);
+
+                    // Add image and button in the right panel.
+                    if (p_isHost)
+                    {
+                        switch (i % 4)
+                        {
+                            case 0:
+                                panelHostRight1.Children.Add(grid);
+                                panelHostRight1.Children.Add(title);
+                                panelHostRight1.Children.Add(myButton);
+                                break;
+                            case 1:
+                                panelHostRight2.Children.Add(grid);
+                                panelHostRight2.Children.Add(title);
+                                panelHostRight2.Children.Add(myButton);
+                                break;
+                            case 2:
+                                panelHostRight3.Children.Add(grid);
+                                panelHostRight3.Children.Add(title);
+                                panelHostRight3.Children.Add(myButton);
+                                break;
+                            case 3:
+                                panelHostRight4.Children.Add(grid);
+                                panelHostRight4.Children.Add(title);
+                                panelHostRight4.Children.Add(myButton);
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        switch (i % 4)
+                        {
+                            case 0:
+                                panelRight1.Children.Add(grid);
+                                panelRight1.Children.Add(title);
+                                panelRight1.Children.Add(myButton);
+                                break;
+                            case 1:
+                                panelRight2.Children.Add(grid);
+                                panelRight2.Children.Add(title);
+                                panelRight2.Children.Add(myButton);
+                                break;
+                            case 2:
+                                panelRight3.Children.Add(grid);
+                                panelRight3.Children.Add(title);
+                                panelRight3.Children.Add(myButton);
+                                break;
+                            case 3:
+                                panelRight4.Children.Add(grid);
+                                panelRight4.Children.Add(title);
+                                panelRight4.Children.Add(myButton);
+                                break;
+                        }
+                    }
                 }
             }
         }
-
-        private void removeStackElement()
-        {
-            for (int i = panelRight1.Children.Count - 1; i >= 0; i--)
-            {
-                panelRight1.Children.RemoveAt(i);
-            }
-            for (int i = panelRight2.Children.Count - 1; i >= 0; i--)
-            {
-                panelRight2.Children.RemoveAt(i);
-            }
-            for (int i = panelRight3.Children.Count - 1; i >= 0; i--)
-            {
-                panelRight3.Children.RemoveAt(i);
-            }
-            for (int i = panelRight4.Children.Count - 1; i >= 0; i--)
-            {
-                panelRight4.Children.RemoveAt(i);
-            }
-        }
+        #endregion
 
         private void buttonG_Click(object sender, RoutedEventArgs e)
         {
@@ -237,6 +413,7 @@ namespace LivestreamerTwitchViewer
             process.Start();
         }
 
+        #region Text Focus
         public void TextBox_GotFocus(object sender, RoutedEventArgs e)
         {
             TextBox tb = (TextBox)sender;
@@ -260,50 +437,68 @@ namespace LivestreamerTwitchViewer
                 tb.Text = "Chat Room Name:";
             }
         }
-
-        private void Quality_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            Globals.Quality = " " + e.AddedItems[0];
-        }
+        #endregion        
 
         private void loadChat_Click(object sender, RoutedEventArgs e)
         {
             TwitchChatBrowser.Navigate(String.Format(Globals.ChatPopupUrl, textBoxStreamChat.Text));
         }
 
-        private void Resize(object sender, RoutedEventArgs e)
+        private TwitchList<Stream> HostreamToStreamList(List<HostStream> p_hostStreamList)
         {
-            if (TwitchChatBrowser.Width == 240)
+            try
             {
-                PanelChat.Width = 500;
-                TwitchChatBrowser.Width = 490;
+                TwitchList<Stream> streamList = new TwitchList<Stream>();
+                streamList.List = new List<Stream>();
+                Console.WriteLine("Count A : " + p_hostStreamList.Count);
+                foreach (HostStream hostStream in p_hostStreamList)
+                {
+                    Console.WriteLine("Count : " + p_hostStreamList.Count);
+                    if (hostStream != null)
+                    {
+                        if (hostStream.Stream != null)
+                        {
+                            try
+                            {
+                                streamList.List.Add(hostStream.Stream);
+                                //Console.WriteLine("game : " + hostStream.Stream.Channel.Game);
+                            }
+                            catch
+                            {
+                                Console.WriteLine("ERROR");
+                            }
+                        }
+                        else { Console.WriteLine("Stream Null"); }
+                    }
+                    else { Console.WriteLine("HostStream Null"); }
+                }
+                return streamList;
             }
-            else
+            catch
             {
-                PanelChat.Width = 250;
-                TwitchChatBrowser.Width = 240;
+                Console.WriteLine("LARGE ERROR");
+                return null;
             }
         }
 
-        private void qualityAdder_Click(object sender, RoutedEventArgs e)
+        private void loadHost_Click(object sender, RoutedEventArgs e)
         {
-            Quality win = new Quality();
-            bool? res = win.ShowDialog();
-            if ((res != null) || (res == true))
+            //await Globals.AClient.GetHostedStreams(index);
+            System.Windows.Interop.ComponentDispatcher.ThreadIdle += new EventHandler(NextPage);
+        }
+
+        private async void NextPage(object sender, EventArgs e)
+        {
+            if (m_offset <= Globals.TotalFollowed / AuthenticatedClient.PageSize)
             {
-                if (win.Result != null && win.Result != "")
-                {
-                    if (!System.IO.File.Exists(AppDomain.CurrentDomain.BaseDirectory + "Qualities.txt"))
-                    {
-                        System.IO.File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + "Qualities.txt", win.Result + Environment.NewLine);
-                    }
-                    else
-                    {
-                        System.IO.File.AppendAllText(AppDomain.CurrentDomain.BaseDirectory + "Qualities.txt", win.Result + Environment.NewLine);
-                    }
-                    Quality.Items.Add(win.Result);
-                }
+                m_offset++;
+                await Globals.AClient.GetHostedStreams(m_offset);
+            }
+            else
+            {
+                System.Windows.Interop.ComponentDispatcher.ThreadIdle -= new EventHandler(NextPage);
             }
         }
+        
     }
 }

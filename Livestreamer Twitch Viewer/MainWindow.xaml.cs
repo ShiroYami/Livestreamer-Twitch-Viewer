@@ -8,6 +8,8 @@ using static System.String;
 using TwitchCSharp.Models;
 using LivestreamerTwitchViewer;
 using System.IO;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace Livestreamer_Twitch_Viewer
 {
@@ -19,7 +21,7 @@ namespace Livestreamer_Twitch_Viewer
         public MainWindow()
         {
             InitializeComponent();
-            TryGetAuthKey();
+            TryGetAuthKey();            
         }
 
         private bool CheckForValidAuthKey()

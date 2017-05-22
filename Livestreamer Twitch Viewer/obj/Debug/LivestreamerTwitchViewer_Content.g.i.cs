@@ -8,6 +8,6 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("livestreamer-v1.12.2-win32-setup.exe")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("resources/bitmap1.bmp")]
 
 
