@@ -96,6 +96,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Client\AuthenticatedClient.cs" />
+    <Compile Include="Client\TwitchClient.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="Exceptions\BadRequestException.cs" />
     <Compile Include="Exceptions\BadResourceException.cs" />
@@ -118,8 +119,10 @@
     </Compile>
     <Compile Include="SimpleJSON.cs" />
     <Compile Include="TwitchStatus.cs" />
+    <Compile Include="V5\Models\FollowedStreams.cs" />
+    <Compile Include="V5\Models\SearchGames.cs" />
     <Compile Include="V5\Requests.cs" />
-    <Compile Include="V5\UserFollows.cs" />
+    <Compile Include="V5\Models\UserFollows.cs" />
     <Page Include="Log.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
