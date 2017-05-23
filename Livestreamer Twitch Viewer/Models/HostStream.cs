@@ -1,40 +1,29 @@
 ﻿using LivestreamerTwitchViewer.Client;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TwitchCSharp.Models;
 
 namespace LivestreamerTwitchViewer.Models
 {
-    class HostStream : IEquatable<HostStream>
+    class HostStream
     {
         private string m_hostLogin;
-        private Task<StreamResult> m_streamResult;
+        private Stream m_stream;
 
         public string HostLogin { get { return m_hostLogin; } }
-        public Stream Stream { get { return m_streamResult.Result.Stream; } }
-        public Task<StreamResult> StreamResult { get { return m_streamResult; } }
+        public Stream Stream { get { return m_stream; } }
 
-        public HostStream(Host p_host)
+        public HostStream(Host p_host, Stream p_stream)
         {
             m_hostLogin = p_host.Hosts.HostLogin;
-            if (p_host.Hosts.TargetLogin == null || p_host.Hosts.TargetLogin == String.Empty)
+            if (p_host.Hosts.TargetLogin == null || p_host.Hosts.TargetLogin == String.Empty || p_stream == null)
             {
-                m_streamResult = null;
+                m_stream = null;
             }
             else
             {
                 AuthenticatedClient.stack++;
-                //m_streamResult = Globals.AClient.GetStreamAsync(p_host.Hosts.TargetLogin);
-                m_streamResult = Globals.AClient.GetStreamAsyncV5(p_host.Hosts.TargetId.ToString());
+                m_stream = p_stream;
             }
-        }
-
-        public bool Equals(HostStream other)
-        {
-            throw new NotImplementedException();
         }
     }
 }

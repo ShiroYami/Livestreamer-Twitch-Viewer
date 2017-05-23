@@ -57,9 +57,8 @@ namespace LivestreamerTwitchViewer.Client
             client.DownloadStringAsync(uri);
         }
 
-        private void OnDownloadStringCompleted(object sender, DownloadStringCompletedEventArgs e)
-        {
-            m_totalRequestCompleted++;
+        private async void OnDownloadStringCompleted(object sender, DownloadStringCompletedEventArgs e)
+        {            
             string json = e.Result;
             Host host = new Host(JSON.Parse(json));
             if (t0 == 0)
@@ -67,12 +66,17 @@ namespace LivestreamerTwitchViewer.Client
                 t0 = DateTime.Now.TimeOfDay.TotalMilliseconds;
                 Console.WriteLine("t0 : " + t0);
             }
-                HostStream hs = new HostStream(host);
-            if (hs.StreamResult != null)
+            if (host.Hosts.TargetLogin != null && host.Hosts.TargetLogin != String.Empty)
             {
-                m_hostStreamsList.Add(hs);
-                Console.WriteLine("stack  " + stack);
+                StreamResult str = await GetStreamAsyncV5(host.Hosts.TargetId.ToString());
+                HostStream hs = new HostStream(host, str.Stream);
+                if (hs != null && hs.Stream != null)
+                {
+                    m_hostStreamsList.Add(hs);
+                    Console.WriteLine("stack  " + stack);
+                }
             }
+            m_totalRequestCompleted++;
             if (m_totalRequestCompleted == Globals.TotalFollowed)
             {
                 m_totalRequestCompleted = 0;

@@ -70,8 +70,8 @@ namespace LivestreamerTwitchViewer
         public void Update2(object sender, EventArgs e)
         {
             Console.WriteLine("COUNT  " + AuthenticatedClient.HostStreamsList.Count);
-            if (AuthenticatedClient.HostStreamsList[AuthenticatedClient.HostStreamsList.Count - 1].StreamResult.Status != TaskStatus.WaitingForActivation)
-            {
+            //if (AuthenticatedClient.HostStreamsList[AuthenticatedClient.HostStreamsList.Count - 1].StreamResult.Status != TaskStatus.WaitingForActivation)
+            //{
                 Console.WriteLine("DONE  " + AuthenticatedClient.HostStreamsList.Count);
                 AuthenticatedClient.stackMax = 0;
 
@@ -84,11 +84,11 @@ namespace LivestreamerTwitchViewer
                 RemoveStackElement(true);
                 //TwitchList<Stream> followed = HostreamToStreamList(AuthenticatedClient.HostStreamsList);
                 TwitchList<Stream> followed = new TwitchList<Stream>();
-                followed.List = AuthenticatedClient.HostStreamsList.Select(hostStream => hostStream.Stream).ToList();
-                //List<Book> books_2 = books_1.Select(book => new Book(book.title)).ToList();
+                //followed.List = AuthenticatedClient.HostStreamsList.Select(hostStream => hostStream.Stream).ToList();
+                followed.List = AuthenticatedClient.HostStreamsList.ConvertAll(hostStream => hostStream.Stream);
                 RefreshStreamPanel(followed, true);
 
-            }
+            //}
         }
 
         #region Quality
@@ -444,43 +444,6 @@ namespace LivestreamerTwitchViewer
             TwitchChatBrowser.Navigate(String.Format(Globals.ChatPopupUrl, textBoxStreamChat.Text));
         }
 
-        private TwitchList<Stream> HostreamToStreamList(List<HostStream> p_hostStreamList)
-        {
-            try
-            {
-                TwitchList<Stream> streamList = new TwitchList<Stream>();
-                streamList.List = new List<Stream>();
-                Console.WriteLine("Count A : " + p_hostStreamList.Count);
-                foreach (HostStream hostStream in p_hostStreamList)
-                {
-                    Console.WriteLine("Count : " + p_hostStreamList.Count);
-                    if (hostStream != null)
-                    {
-                        if (hostStream.Stream != null)
-                        {
-                            try
-                            {
-                                streamList.List.Add(hostStream.Stream);
-                                //Console.WriteLine("game : " + hostStream.Stream.Channel.Game);
-                            }
-                            catch
-                            {
-                                Console.WriteLine("ERROR");
-                            }
-                        }
-                        else { Console.WriteLine("Stream Null"); }
-                    }
-                    else { Console.WriteLine("HostStream Null"); }
-                }
-                return streamList;
-            }
-            catch
-            {
-                Console.WriteLine("LARGE ERROR");
-                return null;
-            }
-        }
-
         private void loadHost_Click(object sender, RoutedEventArgs e)
         {
             //await Globals.AClient.GetHostedStreams(index);
@@ -493,6 +456,7 @@ namespace LivestreamerTwitchViewer
             {
                 m_offset++;
                 await Globals.AClient.GetHostedStreams(m_offset);
+                System.Windows.Interop.ComponentDispatcher.ThreadIdle -= new EventHandler(NextPage);
             }
             else
             {
