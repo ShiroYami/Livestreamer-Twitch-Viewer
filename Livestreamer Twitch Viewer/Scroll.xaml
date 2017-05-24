@@ -14,10 +14,10 @@
                 <ComboBox x:Name="Quality" Height="30" Width="90" Margin="10,0,0,0" SelectionChanged="Quality_SelectionChanged" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="16" FontStyle="Italic" FontWeight="Bold"/>
                 <Button x:Name="qualityAdder" Content="Add" Width="40" Height="30" Margin="10,0,0,0" FontWeight="Bold" Click="qualityAdder_Click" FontSize="16"/>
             </DockPanel>
-            <Button x:Name="button" Content="Refresh Streams" Height="50" Click="button_Click" FontSize="24" FontWeight="Bold"/>
+            <Button x:Name="button" Content="Refresh Streams" Height="50" Click="loadStream_Click" FontSize="24" FontWeight="Bold"/>
             <Button x:Name="host" Content="Refresh Hosts" Margin="0" Height="50" Click="loadHost_Click" FontSize="24" FontWeight="Bold"/>
             <TextBox x:Name="textBoxStream" GotFocus="TextBox_GotFocus" LostFocus="TextBox_LostFocus" Height="50" Text="Enter Channel Name:" Margin="0" FontSize="20" FontWeight="Bold" FontFamily="Segoe UI Emoji" FontStyle="Italic"/>
-            <Button x:Name="button1" Content="Start" Margin="0" Height="50" Click="button1_Click" FontSize="24" FontWeight="Bold"/>
+            <Button x:Name="button1" Content="Start" Margin="0" Height="50" Click="startStream_Click" FontSize="24" FontWeight="Bold"/>
             <TextBox x:Name="textBoxStreamChat" GotFocus="TextBox_GotFocus" LostFocus="TextBox_LostFocusChat" Height="50" Text="Chat Room Name:" Margin="0" FontSize="20" FontWeight="Bold" FontFamily="Segoe UI Emoji" FontStyle="Italic"/>
             <Button x:Name="loadChat" Content="Load Chat Room" Margin="0" Height="50" Click="loadChat_Click" FontSize="24" FontWeight="Bold"/>
             <DockPanel x:Name="PanelChat">

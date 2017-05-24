@@ -42,6 +42,7 @@
         private async static Task<string> generalRequest(string url, string method, object payload = null, string accessToken = null, API api = API.V5, string clientId = null)
         {
             if (ClientId == null) ClientId = Globals.ClientId;
+            if (AccessToken == null) AccessToken = Globals.Authkey;
             url = appendClientId(url, ClientId);
 
             var request = WebRequest.CreateHttp(url);
