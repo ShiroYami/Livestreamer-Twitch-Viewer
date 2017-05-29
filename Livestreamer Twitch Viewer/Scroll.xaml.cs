@@ -1,29 +1,15 @@
-﻿using Livestreamer_Twitch_Viewer;
-using LivestreamerTwitchViewer.Models;
-using LivestreamerTwitchViewer.Client;
-using Newtonsoft.Json;
-using RestSharp;
+﻿using LivestreamerTwitchViewer.Client;
+using LivestreamerTwitchViewer.V5.Models;
 using System;
-using System.Collections.Generic;
+using System.Linq;
 using System.Diagnostics;
-using System.Net;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using TwitchCSharp.Clients;
 using TwitchCSharp.Models;
-using SimpleJSON;
-using static System.String;
-using MSG = System.Windows.MessageBox;
-using TwitchCSharp.Helpers;
-using System.Collections;
-using System.Windows.Threading;
-using System.Threading.Tasks;
-using LivestreamerTwitchViewer.V5;
-using System.Linq;
+using System.Collections.Generic;
 
 namespace LivestreamerTwitchViewer
 {
@@ -34,62 +20,60 @@ namespace LivestreamerTwitchViewer
     public partial class Scroll : Window
     {
 
-        //public TwitchList<Stream> followed;
-        private bool toClose = false;
         private int m_offset = 0;
+        private bool m_loadingChannel = false;
+        private bool m_loadingHost = false;
 
         public Scroll()
         {
+            DataContext = new KeyBinding(this);
             InitializeComponent();
-            InitWindow();
-            Refresh();
+            Enter();
+            SetFont();
+            LoadLoaderImage();
+            InitChatWindow();
             AddItemsToComboQuality();
-            //Toto();
-            //System.Windows.Interop.ComponentDispatcher.ThreadIdle += new EventHandler(Update2);
         }
 
-        async void Toto()
+        #region Init
+        protected override void OnContentRendered(EventArgs e)
         {
-            await Globals.AClient.GetHostedStreams(m_offset);            
+            base.OnContentRendered(e);
+            SetPanelsSizes();
         }
 
-        async void SetTotalFollowed()
+        private void Enter()
+        {
+            Globals.AClient = new AuthenticatedClient(this);
+            SetTotalFollowed();
+        }
+
+        private void SetFont()
+        {
+            button1.FontFamily = Globals.OldNewspaperTypes;
+            hostTab.FontFamily = Globals.OldNewspaperTypes;
+            channelTab.FontFamily = Globals.OldNewspaperTypes;
+            qualityAdder.FontFamily = Globals.OldNewspaperTypes;
+            Quality.FontFamily = Globals.OldNewspaperTypes;
+            textBlock.FontFamily = Globals.OldNewspaperTypes;
+            textBoxStreamChat.FontFamily = Globals.OldNewspaperTypes;
+            button.FontFamily = Globals.OldNewspaperTypes;
+            host.FontFamily = Globals.OldNewspaperTypes;
+            textBoxStream.FontFamily = Globals.OldNewspaperTypes;
+            loadChat.FontFamily = Globals.OldNewspaperTypes;
+        }
+
+        private async void SetTotalFollowed()
         {
             Globals.TotalFollowed = await AuthenticatedClient.GetTotalFollowed();
         }
 
-        async void Update(object sender, EventArgs e)
+        private void LoadLoaderImage()
         {
-            if (m_offset < 11)
-            {
-                await Globals.AClient.GetHostedStreams(m_offset);
-                m_offset++;
-            }
+            loaderStream.Source = new BitmapImage(new Uri(AppDomain.CurrentDomain.BaseDirectory + @"Resources\load-icon-png-10.png"));
+            loaderHost.Source = new BitmapImage(new Uri(AppDomain.CurrentDomain.BaseDirectory + @"Resources\load-icon-png-10.png"));
         }
-
-        public void Update2(object sender, EventArgs e)
-        {
-            Console.WriteLine("COUNT  " + AuthenticatedClient.HostStreamsList.Count);
-            //if (AuthenticatedClient.HostStreamsList[AuthenticatedClient.HostStreamsList.Count - 1].StreamResult.Status != TaskStatus.WaitingForActivation)
-            //{
-                Console.WriteLine("DONE  " + AuthenticatedClient.HostStreamsList.Count);
-                AuthenticatedClient.stackMax = 0;
-
-                AuthenticatedClient.t1 = DateTime.Now.TimeOfDay.TotalMilliseconds;
-                Console.WriteLine("t1 : " + AuthenticatedClient.t1);
-                AuthenticatedClient.delta = AuthenticatedClient.t1 - AuthenticatedClient.t0;
-                Console.WriteLine("Delta Time : " + AuthenticatedClient.delta);
-
-                System.Windows.Interop.ComponentDispatcher.ThreadIdle -= new EventHandler(Update2);
-                RemoveStackElement(true);
-                //TwitchList<Stream> followed = HostreamToStreamList(AuthenticatedClient.HostStreamsList);
-                TwitchList<Stream> followed = new TwitchList<Stream>();
-                //followed.List = AuthenticatedClient.HostStreamsList.Select(hostStream => hostStream.Stream).ToList();
-                followed.List = AuthenticatedClient.HostStreamsList.ConvertAll(hostStream => hostStream.Stream);
-                RefreshStreamPanel(followed, true);
-
-            //}
-        }
+        #endregion
 
         #region Quality
         private void AddItemsToComboQuality()
@@ -132,7 +116,8 @@ namespace LivestreamerTwitchViewer
         }
         #endregion
 
-        private void InitWindow()
+        #region Chat window
+        private void InitChatWindow()
         {
             //setup webbrowser
             Helper.SetSilent(TwitchChatBrowser, true);
@@ -144,47 +129,8 @@ namespace LivestreamerTwitchViewer
         {
             TwitchChatBrowser.Visibility = Visibility.Visible;
         }
-
-        private bool Refresh()
-        {
-            TwitchAuthenticatedClient tempClient = null;
-            try
-            {
-                tempClient = new TwitchAuthenticatedClient(Globals.ClientId, Globals.Authkey);
-            }
-            catch
-            {
-                MSG.Show("You auth key is invalid", "Try again!", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-                toClose = true;
-                return false;
-            }
-            User user = tempClient.GetMyUser();
-            if (user == null || IsNullOrWhiteSpace(user.Name))
-            {
-                return false;
-            }
-            MSG.Show("Connected as " + user.Name, "Success", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-            Globals.Client = tempClient;
-            Globals.UserId = user.Id;
-            Globals.AClient = new AuthenticatedClient(this);
-            SetTotalFollowed();
-            Globals.Status.Username = user.Name;
-            Globals.Status.Displayname = user.DisplayName;
-            Globals.Quality = " source";
-            return true;
-        }
-
-        protected override void OnContentRendered(EventArgs e)
-        {
-            base.OnContentRendered(e);
-            if (toClose)
-            {
-                MainWindow main = new MainWindow();
-                main.Show();
-                this.Close();
-            }
-        }
-
+        #endregion         
+        
         #region Resizer
         private void update_size(object sender, SizeChangedEventArgs e)
         {
@@ -193,21 +139,27 @@ namespace LivestreamerTwitchViewer
 
         private void SetPanelsSizes()
         {
-            fullPanel.Width = this.ActualWidth - (double)20;
-            scrollStream.Width = this.ActualWidth - (double)280;
-            streamPanel.Width = this.ActualWidth - (double)280;
-            scrollStreamHost.Width = this.ActualWidth - (double)280;
-            streamPanelHost.Width = this.ActualWidth - (double)280;
-            TwitchChatBrowser.Height = this.ActualHeight - (double)350;
-            double size = (this.ActualWidth - (double)335) / (double)4;
-            panelRight1.Width = size;
-            panelRight2.Width = size;
-            panelRight3.Width = size;
-            panelRight4.Width = size;
-            panelHostRight1.Width = size;
-            panelHostRight2.Width = size;
-            panelHostRight3.Width = size;
-            panelHostRight4.Width = size;
+            try
+            {
+                fullPanel.Width = ActualWidth - 20;
+                scrollStream.Width = ActualWidth - 280;
+                streamPanel.Width = ActualWidth - 280;
+                scrollStreamHost.Width = ActualWidth - 280;
+                streamPanelHost.Width = ActualWidth - 280;
+                TwitchChatBrowser.Height = ActualHeight - 350;
+                double size = (ActualWidth - 335) / 4;
+                panelRight1.Width = size;
+                panelRight2.Width = size;
+                panelRight3.Width = size;
+                panelRight4.Width = size;
+                panelHostRight1.Width = size;
+                panelHostRight2.Width = size;
+                panelHostRight3.Width = size;
+                panelHostRight4.Width = size;
+                loaderStream.Margin = new Thickness(-((ActualWidth - 250) / 2 + 25), (ActualHeight - 250) / 2 + 25, 0, 0);
+                loaderHost.Margin = new Thickness(-((ActualWidth - 250) / 2 + 25), (ActualHeight - 250) / 2 + 25, 0, 0);
+            }
+            catch{}
         }
 
         private void Resize(object sender, RoutedEventArgs e)
@@ -223,14 +175,7 @@ namespace LivestreamerTwitchViewer
                 TwitchChatBrowser.Width = 240;
             }
         }
-        #endregion
-
-        private void button_Click(object sender, RoutedEventArgs e)
-        {
-            TwitchList<Stream>  followed = Globals.Client.GetFollowedStreams();
-            RemoveStackElement(false);
-            RefreshStreamPanel(followed, false);
-        }
+        #endregion        
 
         #region Refresh Elements
         private void RemoveStackElement(bool p_isHost)
@@ -275,11 +220,21 @@ namespace LivestreamerTwitchViewer
             }
         }
 
-        private void RefreshStreamPanel(TwitchList<Stream> followed, bool p_isHost)
+        public void HostRefresh()
         {
-            for (int i = 0; i < followed.List.Count; i++)
+            TwitchList<Stream> followed = new TwitchList<Stream>();
+            followed.List = AuthenticatedClient.HostStreamsList.ConvertAll(hostStream => hostStream.Stream);
+            List<string> hosters = AuthenticatedClient.HostStreamsList.ConvertAll(hoster => hoster.HostLogin);
+            AuthenticatedClient.ResetHostStreamList();
+            m_offset = 0;
+            RefreshStreamPanel(followed, true, hosters);
+        }
+
+        private async void RefreshStreamPanel(TwitchList<Stream> p_followed, bool p_isHost, List<string> p_hosters = null)
+        {
+            for (int i = 0; i < p_followed.List.Count; i++)
             {
-                Stream stream = followed.List[i];
+                Stream stream = p_followed.List[i];
                 if (stream != null)
                 {
                     // Create images preview.
@@ -300,7 +255,8 @@ namespace LivestreamerTwitchViewer
                     img2.Stretch = Stretch.None;
                     try
                     {
-                        Game game = Globals.Client.SearchGames(stream.Game).List[0];
+                        SearchGames sGame = await TwitchClient.SearchGamesAsyncV5(stream.Game);
+                        Game game = sGame.Games[0];
                         img2.ToolTip = game.Name;
                         Uri uri2 = new Uri(game.Box.Small);
                         BitmapImage bmp2 = new BitmapImage(uri2);
@@ -321,17 +277,23 @@ namespace LivestreamerTwitchViewer
                     grid.Children.Add(img2);
 
                     // Create Textblock
+                    string viewers = stream.Viewers.ToString();
+                    string quality = stream.VideoHeight.ToString();
+                    string hoster = String.Empty;
+                    if (p_hosters != null) hoster = "Hosted by " + p_hosters[i] + Environment.NewLine;
                     TextBlock title = new TextBlock();
-                    title.Text = stream.Channel.Status;
-                    title.Height = 40;
-                    title.FontSize = 16;
+                    title.Text = hoster + viewers + " viewers - Max quality: " + quality + "p/" + quality + "p60" + Environment.NewLine + stream.Channel.Status;
+                    title.Height = 60;
+                    title.FontSize = 15;
                     title.TextWrapping = TextWrapping.Wrap;
                     title.FontWeight = FontWeights.Bold;
+                    title.FontFamily = Globals.OldNewspaperTypes;
 
                     // Create buttons.
                     Button myButton = new Button();
                     myButton.Content = stream.Channel.Name;
-                    myButton.Click += new RoutedEventHandler(buttonG_Click);
+                    myButton.FontFamily = Globals.OldNewspaperTypes;
+                    myButton.Click += new RoutedEventHandler(startLoadedStream_Click);
 
                     // Add image and button in the right panel.
                     if (p_isHost)
@@ -388,32 +350,20 @@ namespace LivestreamerTwitchViewer
                     }
                 }
             }
+            if (p_isHost)
+            {
+                loaderHost.Visibility = Visibility.Hidden;
+                m_loadingHost = false;
+            }
+            else
+            {
+                loaderStream.Visibility = Visibility.Hidden;
+                m_loadingChannel = false;
+            }
         }
-        #endregion
+        #endregion       
 
-        private void buttonG_Click(object sender, RoutedEventArgs e)
-        {
-            String name = (sender as Button).Content.ToString();
-            Process process = new Process();
-            process.StartInfo.FileName = "cmd.exe";
-            // Commande à exécuter
-            process.StartInfo.Arguments = Globals.Livestreamer + Globals.Authrequest + Globals.Authkey + Globals.TwitchLink + name + Globals.Quality;
-            process.StartInfo.UseShellExecute = true;
-            process.Start();
-        }
-
-        private void button1_Click(object sender, RoutedEventArgs e)
-        {
-            String name = textBoxStream.Text;
-            Process process = new Process();
-            process.StartInfo.FileName = "cmd.exe";
-            // Commande à exécuter
-            process.StartInfo.Arguments = Globals.Livestreamer + Globals.Authrequest + Globals.Authkey + Globals.TwitchLink + name + Globals.Quality;
-            process.StartInfo.UseShellExecute = true;
-            process.Start();
-        }
-
-        #region Text Focus
+        #region Text Box Focus
         public void TextBox_GotFocus(object sender, RoutedEventArgs e)
         {
             TextBox tb = (TextBox)sender;
@@ -437,32 +387,98 @@ namespace LivestreamerTwitchViewer
                 tb.Text = "Chat Room Name:";
             }
         }
-        #endregion        
+        #endregion
 
-        private void loadChat_Click(object sender, RoutedEventArgs e)
+        #region ReloadTab
+        public void SelectTabToReload()
         {
-            TwitchChatBrowser.Navigate(String.Format(Globals.ChatPopupUrl, textBoxStreamChat.Text));
+            if (channelTab.IsSelected)
+            {
+                ReloadChannel();
+            }
+            else if (hostTab.IsSelected)
+            {
+                ReloadHost();
+            }
         }
 
-        private void loadHost_Click(object sender, RoutedEventArgs e)
+        private async void ReloadChannel()
         {
-            //await Globals.AClient.GetHostedStreams(index);
-            System.Windows.Interop.ComponentDispatcher.ThreadIdle += new EventHandler(NextPage);
+            if (!m_loadingChannel)
+            {
+                m_loadingChannel = true;
+                loaderStream.Visibility = Visibility.Visible;
+                RemoveStackElement(false);
+                FollowedStreams followedStream = await TwitchClient.GetFollowedStreamsAsyncV5(100);
+                TwitchList<Stream> followed = new TwitchList<Stream>();
+                followed.List = followedStream.Streams.OfType<Stream>().ToList();
+                RefreshStreamPanel(followed, false);
+            }
         }
 
-        private async void NextPage(object sender, EventArgs e)
+        private void ReloadHost()
+        {
+            if (!m_loadingHost)
+            {
+                m_loadingHost = true;
+                loaderHost.Visibility = Visibility.Visible;
+                RemoveStackElement(true);
+                System.Windows.Interop.ComponentDispatcher.ThreadIdle += new EventHandler(LoadHost);
+            }
+        }
+
+        private async void LoadHost(object sender, EventArgs e)
         {
             if (m_offset <= Globals.TotalFollowed / AuthenticatedClient.PageSize)
             {
                 m_offset++;
                 await Globals.AClient.GetHostedStreams(m_offset);
-                System.Windows.Interop.ComponentDispatcher.ThreadIdle -= new EventHandler(NextPage);
             }
             else
             {
-                System.Windows.Interop.ComponentDispatcher.ThreadIdle -= new EventHandler(NextPage);
+                System.Windows.Interop.ComponentDispatcher.ThreadIdle -= new EventHandler(LoadHost);
             }
         }
+        #endregion
+
+        #region Button click
+        private void loadStream_Click(object sender, RoutedEventArgs e)
+        {
+            ReloadChannel();
+        }
+
+        private void loadHost_Click(object sender, RoutedEventArgs e)
+        {
+            ReloadHost();
+        }
+
+        private void loadChat_Click(object sender, RoutedEventArgs e)
+        {
+            TwitchChatBrowser.Navigate(String.Format(Globals.ChatPopupUrl, textBoxStreamChat.Text));
+        }
+                
+        private void startLoadedStream_Click(object sender, RoutedEventArgs e)
+        {
+            String name = (sender as Button).Content.ToString();
+            Process process = new Process();
+            process.StartInfo.FileName = "cmd.exe";
+            // Commande à exécuter
+            process.StartInfo.Arguments = Globals.Livestreamer + Globals.Authrequest + Globals.Authkey + Globals.TwitchLink + name + Globals.Quality;
+            process.StartInfo.UseShellExecute = true;
+            process.Start();
+        }
+
+        private void startStream_Click(object sender, RoutedEventArgs e)
+        {
+            String name = textBoxStream.Text;
+            Process process = new Process();
+            process.StartInfo.FileName = "cmd.exe";
+            // Commande à exécuter
+            process.StartInfo.Arguments = Globals.Livestreamer + Globals.Authrequest + Globals.Authkey + Globals.TwitchLink + name + Globals.Quality;
+            process.StartInfo.UseShellExecute = true;
+            process.Start();
+        }
+        #endregion
         
     }
 }

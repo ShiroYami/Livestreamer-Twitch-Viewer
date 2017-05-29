@@ -5,11 +5,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Livestreamer_Twitch_Viewer"
         mc:Ignorable="d"
-        Title="Log" Height="300" Width="300">
+        Title="Log" Height="300" Width="350">
     <Grid>
-        <PasswordBox x:Name="AuthKeyBox" HorizontalAlignment="Center" Margin="0,30,0,0" VerticalAlignment="Top" Height="50" Width="250"/>
-        <Button x:Name="button" Content="Validate" HorizontalAlignment="Center" Margin="0,125,150,0" VerticalAlignment="Top" Width="95" Click="button_Click" Height="20"/>
-        <Button x:Name="button1" Content="Generate" HorizontalAlignment="Center" Margin="0,190,150,0" VerticalAlignment="Top" Width="95" Click="button1_Click" Height="20"/>
-        <Button x:Name="remove" Content="Remove registered key" Width="119" HorizontalAlignment="Center" VerticalAlignment="Top" Height="20" Margin="130,190,0,0" FontSize="10" Click="remove_Click"/>
+        <PasswordBox x:Name="AuthKeyBox" HorizontalAlignment="Center" Margin="22,30,21.6,0" VerticalAlignment="Top" Height="50" Width="250" FontWeight="Bold" FontSize="16"/>
+        <Button x:Name="button" Content="Validate" HorizontalAlignment="Center" Margin="22,125,151.6,0" VerticalAlignment="Top" Width="120" Click="button_Click" Height="30" FontWeight="Bold" FontSize="16"/>
+        <Button x:Name="button1" Content="Generate" HorizontalAlignment="Right" Margin="0,125,21.6,0" VerticalAlignment="Top" Width="120" Click="button1_Click" Height="30" FontWeight="Bold" FontSize="16"/>
+        <Button x:Name="remove" Content="Remove registered key" Width="200" HorizontalAlignment="Center" VerticalAlignment="Top" Height="30" Margin="22,205,71.6,0" FontSize="16" Click="remove_Click" FontWeight="Bold"/>
     </Grid>
 </Window>

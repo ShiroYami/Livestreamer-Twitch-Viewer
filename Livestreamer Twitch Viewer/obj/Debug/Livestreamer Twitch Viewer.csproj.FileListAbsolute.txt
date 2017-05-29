@@ -118,3 +118,34 @@ C:\Users\admin.20163428-ALTEN\Desktop\T\Livestreamer-Twitch-Viewer\Livestreamer 
 C:\Users\admin.20163428-ALTEN\Desktop\T\Livestreamer-Twitch-Viewer\Livestreamer Twitch Viewer\obj\Debug\LivestreamerTwitchViewer.g.resources
 C:\Users\admin.20163428-ALTEN\Desktop\T\Livestreamer-Twitch-Viewer\Livestreamer Twitch Viewer\obj\Debug\LivestreamerTwitchViewer.Properties.Resources.resources
 C:\Users\admin.20163428-ALTEN\Desktop\T\Livestreamer-Twitch-Viewer\Livestreamer Twitch Viewer\obj\Debug\Livestreamer Twitch Viewer.csproj.GenerateResource.Cache
+C:\Users\admin.20163428-ALTEN\Desktop\T\Livestreamer-Twitch-Viewer-master\Livestreamer Twitch Viewer\bin\Debug\LivestreamerTwitchViewer.exe.config
+C:\Users\admin.20163428-ALTEN\Desktop\T\Livestreamer-Twitch-Viewer-master\Livestreamer Twitch Viewer\obj\Debug\LivestreamerTwitchViewer.exe
+C:\Users\admin.20163428-ALTEN\Desktop\T\Livestreamer-Twitch-Viewer-master\Livestreamer Twitch Viewer\obj\Debug\LivestreamerTwitchViewer.pdb
+C:\Users\admin.20163428-ALTEN\Desktop\T\Livestreamer-Twitch-Viewer-master\Livestreamer Twitch Viewer\bin\Debug\Resources\livestreamer_setup.exe
+C:\Users\admin.20163428-ALTEN\Desktop\T\Livestreamer-Twitch-Viewer-master\Livestreamer Twitch Viewer\bin\Debug\LivestreamerTwitchViewer.exe
+C:\Users\admin.20163428-ALTEN\Desktop\T\Livestreamer-Twitch-Viewer-master\Livestreamer Twitch Viewer\bin\Debug\LivestreamerTwitchViewer.pdb
+C:\Users\admin.20163428-ALTEN\Desktop\T\Livestreamer-Twitch-Viewer-master\Livestreamer Twitch Viewer\bin\Debug\Newtonsoft.Json.dll
+C:\Users\admin.20163428-ALTEN\Desktop\T\Livestreamer-Twitch-Viewer-master\Livestreamer Twitch Viewer\bin\Debug\RestSharp.dll
+C:\Users\admin.20163428-ALTEN\Desktop\T\Livestreamer-Twitch-Viewer-master\Livestreamer Twitch Viewer\bin\Debug\YamlDotNet.dll
+C:\Users\admin.20163428-ALTEN\Desktop\T\Livestreamer-Twitch-Viewer-master\Livestreamer Twitch Viewer\bin\Debug\Newtonsoft.Json.xml
+C:\Users\admin.20163428-ALTEN\Desktop\T\Livestreamer-Twitch-Viewer-master\Livestreamer Twitch Viewer\bin\Debug\RestSharp.xml
+C:\Users\admin.20163428-ALTEN\Desktop\T\Livestreamer-Twitch-Viewer-master\Livestreamer Twitch Viewer\bin\Debug\TwitchCSharp.pdb
+C:\Users\admin.20163428-ALTEN\Desktop\T\Livestreamer-Twitch-Viewer-master\Livestreamer Twitch Viewer\bin\Debug\YamlDotNet.pdb
+C:\Users\admin.20163428-ALTEN\Desktop\T\Livestreamer-Twitch-Viewer-master\Livestreamer Twitch Viewer\bin\Debug\YamlDotNet.xml
+C:\Users\admin.20163428-ALTEN\Desktop\T\Livestreamer-Twitch-Viewer-master\Livestreamer Twitch Viewer\obj\Debug\Livestreamer Twitch Viewer.csprojResolveAssemblyReference.cache
+C:\Users\admin.20163428-ALTEN\Desktop\T\Livestreamer-Twitch-Viewer-master\Livestreamer Twitch Viewer\obj\Debug\Log.g.cs
+C:\Users\admin.20163428-ALTEN\Desktop\T\Livestreamer-Twitch-Viewer-master\Livestreamer Twitch Viewer\obj\Debug\MainWindow.g.cs
+C:\Users\admin.20163428-ALTEN\Desktop\T\Livestreamer-Twitch-Viewer-master\Livestreamer Twitch Viewer\obj\Debug\Quality.g.cs
+C:\Users\admin.20163428-ALTEN\Desktop\T\Livestreamer-Twitch-Viewer-master\Livestreamer Twitch Viewer\obj\Debug\Scroll.g.cs
+C:\Users\admin.20163428-ALTEN\Desktop\T\Livestreamer-Twitch-Viewer-master\Livestreamer Twitch Viewer\obj\Debug\App.g.cs
+C:\Users\admin.20163428-ALTEN\Desktop\T\Livestreamer-Twitch-Viewer-master\Livestreamer Twitch Viewer\obj\Debug\LivestreamerTwitchViewer_MarkupCompile.cache
+C:\Users\admin.20163428-ALTEN\Desktop\T\Livestreamer-Twitch-Viewer-master\Livestreamer Twitch Viewer\obj\Debug\LivestreamerTwitchViewer_MarkupCompile.lref
+C:\Users\admin.20163428-ALTEN\Desktop\T\Livestreamer-Twitch-Viewer-master\Livestreamer Twitch Viewer\obj\Debug\Log.baml
+C:\Users\admin.20163428-ALTEN\Desktop\T\Livestreamer-Twitch-Viewer-master\Livestreamer Twitch Viewer\obj\Debug\MainWindow.baml
+C:\Users\admin.20163428-ALTEN\Desktop\T\Livestreamer-Twitch-Viewer-master\Livestreamer Twitch Viewer\obj\Debug\Quality.baml
+C:\Users\admin.20163428-ALTEN\Desktop\T\Livestreamer-Twitch-Viewer-master\Livestreamer Twitch Viewer\obj\Debug\Scroll.baml
+C:\Users\admin.20163428-ALTEN\Desktop\T\Livestreamer-Twitch-Viewer-master\Livestreamer Twitch Viewer\obj\Debug\LivestreamerTwitchViewer.g.resources
+C:\Users\admin.20163428-ALTEN\Desktop\T\Livestreamer-Twitch-Viewer-master\Livestreamer Twitch Viewer\obj\Debug\LivestreamerTwitchViewer.Properties.Resources.resources
+C:\Users\admin.20163428-ALTEN\Desktop\T\Livestreamer-Twitch-Viewer-master\Livestreamer Twitch Viewer\obj\Debug\Livestreamer Twitch Viewer.csproj.GenerateResource.Cache
+C:\Users\Yami_no_Neko\Documents\Visual Studio 2015\Projects\Livestreamer-Twitch-Viewer\Livestreamer Twitch Viewer\bin\Debug\Resources\load-icon-png-10.png
+C:\Users\Yami_no_Neko\Documents\Visual Studio 2015\Projects\Livestreamer-Twitch-Viewer\Livestreamer Twitch Viewer\bin\Debug\Resources\OldNewspaperTypes.ttf

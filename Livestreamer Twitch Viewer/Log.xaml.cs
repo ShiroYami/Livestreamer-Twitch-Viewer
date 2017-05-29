@@ -1,6 +1,5 @@
 ﻿using LivestreamerTwitchViewer;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows;
 using MSG = System.Windows.MessageBox;
@@ -19,6 +18,14 @@ namespace Livestreamer_Twitch_Viewer
         public Log()
         {
             InitializeComponent();
+            SetFont();
+        }
+
+        private void SetFont()
+        {
+            button1.FontFamily = Globals.OldNewspaperTypes;
+            button.FontFamily = Globals.OldNewspaperTypes;
+            remove.FontFamily = Globals.OldNewspaperTypes;
         }
 
         private void button_Click(object sender, RoutedEventArgs e)
@@ -32,7 +39,6 @@ namespace Livestreamer_Twitch_Viewer
         {
             Process process = new Process();
             process.StartInfo.FileName = "cmd.exe";
-            // Commande à exécuter
             process.StartInfo.Arguments = Globals.CreateAuthKeyLink;
             process.StartInfo.UseShellExecute = true;
             process.Start();

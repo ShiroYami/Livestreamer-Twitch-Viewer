@@ -1,6 +1,8 @@
 ﻿using LivestreamerTwitchViewer.Client;
+using LivestreamerTwitchViewer.Models;
 using System;
 using System.IO;
+using System.Windows.Media;
 using TwitchCSharp.Clients;
 
 namespace LivestreamerTwitchViewer
@@ -21,13 +23,15 @@ namespace LivestreamerTwitchViewer
         public static readonly string CountdownFile = Path.Combine(MyFolderPath, "countdown.txt");
         public static readonly string LogFile = Path.Combine(MyFolderPath, "log.txt");
 
+        public static TwitchStatus Status = new TwitchStatus();
         public static TwitchAuthenticatedClient Client;
         public static AuthenticatedClient AClient;
         public static string Quality = " source";
-        public static string Authkey;// = "dwzej4ed3g1jrdibfpiwqwaod4ui1v";
-        public static long UserId;// = 61118319;
+        public static string Authkey;   // = "dwzej4ed3g1jrdibfpiwqwaod4ui1v";
+        public static long UserId;      // = 61118319;
         public static int TotalFollowed;
 
-        public static TwitchStatus Status = new TwitchStatus();
+        public static Uri UriFont = new Uri(AppDomain.CurrentDomain.BaseDirectory + @"Resources\OldNewspaperTypes.ttf");
+        public static FontFamily OldNewspaperTypes = new FontFamily(UriFont, "OldNewspaperTypes");
     }
 }

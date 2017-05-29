@@ -21,7 +21,6 @@ namespace LivestreamerTwitchViewer.Models
             }
             else
             {
-                AuthenticatedClient.stack++;
                 m_stream = p_stream;
             }
         }

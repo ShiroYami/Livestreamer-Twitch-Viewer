@@ -1,16 +1,10 @@
 ﻿using LivestreamerTwitchViewer.Models;
-using LivestreamerTwitchViewer.V5;
-using RestSharp;
+using LivestreamerTwitchViewer.V5.Models;
 using SimpleJSON;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading.Tasks;
-using TwitchCSharp.Clients;
-using TwitchCSharp.Helpers;
 using TwitchCSharp.Models;
 
 namespace LivestreamerTwitchViewer.Client
@@ -19,14 +13,8 @@ namespace LivestreamerTwitchViewer.Client
     {
         private static List<HostStream> m_hostStreamsList;
         private Scroll m_scroll;
-        private int m_totalRequestCompleted;
         private static int m_pageZize = 100;
-        public static int stack = 0;
-        public static int stackMax = 0;
-
-        public static double t0 = 0;
-        public static double t1;
-        public static double delta;
+        private static int m_totalRequestCompleted;
 
         public static List<HostStream> HostStreamsList { get { return m_hostStreamsList; } }
         public Scroll Scroll { get { return m_scroll; } }
@@ -39,21 +27,27 @@ namespace LivestreamerTwitchViewer.Client
             m_totalRequestCompleted = 0;
         }
 
-        private TwitchList<FollowedChannel> GetFollowed(int p_offset)
+        public async Task GetHostedStreams(int p_offset)
         {
-            PagingInfo page = new PagingInfo();
-            page.PageSize = PageSize;
-            page.Page = p_offset;
-            TwitchList<FollowedChannel> li = Globals.Client.GetFollowedChannels(Globals.Client.GetMyUser().Name, page);
-            return li;
+            UserFollows userFollows = await GetFollowedAsync(p_offset);
+            foreach (UserFollow userFollow in userFollows.Follows)
+            {
+                double uid = userFollow.Channel.Id;
+                GetHost(uid);
+            }
         }
 
-        private async Task GetHost(double userId)
+        private async Task<UserFollows> GetFollowedAsync(int p_offset)
+        {
+            UserFollows uf = await TwitchClient.GetUserFollowsAsyncV5(PageSize, (p_offset - 1) * PageSize);
+            return uf;
+        }
+
+        private void GetHost(double userId)
         {
             Uri uri = new Uri(Globals.HostURL + userId);
             WebClient client = new WebClient();
             client.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnDownloadStringCompleted);
-            await Task.Yield();
             client.DownloadStringAsync(uri);
         }
 
@@ -61,72 +55,32 @@ namespace LivestreamerTwitchViewer.Client
         {            
             string json = e.Result;
             Host host = new Host(JSON.Parse(json));
-            if (t0 == 0)
-            {
-                t0 = DateTime.Now.TimeOfDay.TotalMilliseconds;
-                Console.WriteLine("t0 : " + t0);
-            }
             if (host.Hosts.TargetLogin != null && host.Hosts.TargetLogin != String.Empty)
             {
-                StreamResult str = await GetStreamAsyncV5(host.Hosts.TargetId.ToString());
+                StreamResult str = await TwitchClient.GetStreamAsyncV5(host.Hosts.TargetId.ToString());
                 HostStream hs = new HostStream(host, str.Stream);
                 if (hs != null && hs.Stream != null)
                 {
                     m_hostStreamsList.Add(hs);
-                    Console.WriteLine("stack  " + stack);
                 }
             }
             m_totalRequestCompleted++;
             if (m_totalRequestCompleted == Globals.TotalFollowed)
             {
                 m_totalRequestCompleted = 0;
-                stackMax = stack;
-                Console.WriteLine("stackMax : " + stackMax);
-                System.Windows.Interop.ComponentDispatcher.ThreadIdle += new EventHandler(Scroll.Update2);
+                Scroll.HostRefresh();
             }
-        }
-
-        public async Task GetHostedStreams(int p_offset)
-        {
-            TwitchList<FollowedChannel> followedList = GetFollowed(p_offset);
-            foreach(FollowedChannel followedChannel in followedList.List)
-            {
-                double uid = followedChannel.Channel.Id;
-                //Console.WriteLine(followedChannel.Channel.Name + "  " + followedChannel.Channel.Id);
-                await GetHost(uid);
-            }
-        }
-
-        public async Task<StreamResult> GetStreamAsync(string channel)
-        {
-            var request = GetRequest("streams/{channel}", Method.GET);
-            request.AddUrlSegment("channel", channel);
-            var response = await Globals.Client.restClient.ExecuteTaskAsync<StreamResult>(request);
-            return response.Data;            
-        }
-
-        public async Task<StreamResult> GetStreamAsyncV5(string channelId, string streamType = "all")
-        {
-            string optionalQuery = $"?stream_type={streamType}";
-            return await Requests.GetGeneric<StreamResult>($"https://api.twitch.tv/kraken/streams/{channelId}", null, Requests.API.V5);
-        }
-
-        private RestRequest GetRequest(string url, Method method)
-        {
-            return new RestRequest(url, method);
         }
 
         public async static Task<int> GetTotalFollowed()
         {
-            UserFollows follows = await GetUserFollowsAsync();
+            UserFollows follows = await TwitchClient.GetUserFollowsAsyncV5();
             return follows.Total;
         }
 
-        public async static Task<UserFollows> GetUserFollowsAsync()
+        public static void ResetHostStreamList()
         {
-            string userId = Globals.UserId.ToString();
-            Requests.ClientId = Globals.ClientId;
-            return await Requests.GetGeneric<UserFollows>($"https://api.twitch.tv/kraken/users/{userId}/follows/channels", null, Requests.API.V5);
+            m_hostStreamsList = new List<HostStream>(); 
         }
 
     }
