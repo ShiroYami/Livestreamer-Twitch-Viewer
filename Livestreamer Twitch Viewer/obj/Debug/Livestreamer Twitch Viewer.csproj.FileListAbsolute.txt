@@ -147,3 +147,5 @@ C:\Users\admin.20163428-ALTEN\Desktop\T\Livestreamer-Twitch-Viewer-master\Livest
 C:\Users\admin.20163428-ALTEN\Desktop\T\Livestreamer-Twitch-Viewer-master\Livestreamer Twitch Viewer\obj\Debug\LivestreamerTwitchViewer.g.resources
 C:\Users\admin.20163428-ALTEN\Desktop\T\Livestreamer-Twitch-Viewer-master\Livestreamer Twitch Viewer\obj\Debug\LivestreamerTwitchViewer.Properties.Resources.resources
 C:\Users\admin.20163428-ALTEN\Desktop\T\Livestreamer-Twitch-Viewer-master\Livestreamer Twitch Viewer\obj\Debug\Livestreamer Twitch Viewer.csproj.GenerateResource.Cache
+C:\Users\Yami_no_Neko\Documents\Visual Studio 2015\Projects\Livestreamer-Twitch-Viewer\Livestreamer Twitch Viewer\bin\Debug\Resources\load-icon-png-10.png
+C:\Users\Yami_no_Neko\Documents\Visual Studio 2015\Projects\Livestreamer-Twitch-Viewer\Livestreamer Twitch Viewer\bin\Debug\Resources\OldNewspaperTypes.ttf

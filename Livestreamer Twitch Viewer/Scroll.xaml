@@ -7,6 +7,9 @@
         mc:Ignorable="d"
         SizeChanged="update_size"
         Title="Livestreamer Twitch Viewer" Height="980" Width="1720">
+    <Window.InputBindings>
+        <KeyBinding Key="F5" Command="{Binding RefreshCommand}" />
+    </Window.InputBindings>
     <DockPanel x:Name="fullPanel" Width="1700" Height="940" Margin="0,10,0,0">
         <StackPanel x:Name="panelLeft" Width="250" HorizontalAlignment="Left">
             <DockPanel Height="50" VerticalAlignment="Top" Margin="0" LastChildFill="False">
@@ -26,23 +29,73 @@
             </DockPanel>
         </StackPanel>
         <TabControl>
-            <TabItem x:Name="channelTab" Header="Channels" Height="30" Width="80" Margin="-2,0,0,0" HorizontalAlignment="Left" FontWeight="Bold" FontSize="16">
+            <TabItem x:Name="channelTab" Header="Channels" Height="30" Width="100" Margin="-2,0,0,0" HorizontalAlignment="Left" FontWeight="Bold" FontSize="16">
                 <ScrollViewer x:Name="scrollStream" Margin="10,0,0,0" HorizontalAlignment="Left">
                     <DockPanel x:Name="streamPanel" HorizontalAlignment="Left">
                         <StackPanel x:Name="panelRight1" Height="5000" VerticalAlignment="Top" HorizontalAlignment="Left" Width="345"/>
                         <StackPanel x:Name="panelRight2" Height="5000" VerticalAlignment="Top" HorizontalAlignment="Left" Width="345" Margin="10,0,0,0"/>
                         <StackPanel x:Name="panelRight3" Height="5000" VerticalAlignment="Top" HorizontalAlignment="Left" Width="345" Margin="10,0,0,0"/>
                         <StackPanel x:Name="panelRight4" Height="5000" VerticalAlignment="Top" HorizontalAlignment="Left" Width="345" Margin="10,0"/>
+                        <Image x:Name="loaderStream" Height="100" Width="100" Margin="-734,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" RenderTransformOrigin="0,0" Visibility="Hidden">
+                            <Image.RenderTransform>
+                                <RotateTransform CenterX="50" CenterY="50" />
+                            </Image.RenderTransform>
+                            <Image.Style>
+                                <Style>
+                                    <Style.Triggers>
+                                        <Trigger Property="Image.IsEnabled" Value="True">
+                                            <Trigger.EnterActions>
+                                                <BeginStoryboard>
+                                                    <Storyboard>
+                                                        <DoubleAnimation
+                                    Storyboard.TargetProperty="RenderTransform.Angle"
+                                    From="0"
+                                    To="360"
+                                    Duration="0:0:1"
+                                    RepeatBehavior="Forever" />
+                                                    </Storyboard>
+                                                </BeginStoryboard>
+                                            </Trigger.EnterActions>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Image.Style>
+                        </Image>
                     </DockPanel>
                 </ScrollViewer>
             </TabItem>
-            <TabItem x:Name="hostTab" Header="Hosts" Width="80" Height="30" HorizontalAlignment="Left" Margin="-2,0,0,0" FontWeight="Bold" FontSize="16">
+            <TabItem x:Name="hostTab" Header="Hosts" Width="100" Height="30" HorizontalAlignment="Left" Margin="-2,0,0,0" FontWeight="Bold" FontSize="16">
                 <ScrollViewer x:Name="scrollStreamHost" Margin="10,0,0,0" HorizontalAlignment="Left">
                     <DockPanel x:Name="streamPanelHost" HorizontalAlignment="Left">
                         <StackPanel x:Name="panelHostRight1" Height="5000" VerticalAlignment="Top" HorizontalAlignment="Left" Width="345"/>
                         <StackPanel x:Name="panelHostRight2" Height="5000" VerticalAlignment="Top" HorizontalAlignment="Left" Width="345" Margin="10,0,0,0"/>
                         <StackPanel x:Name="panelHostRight3" Height="5000" VerticalAlignment="Top" HorizontalAlignment="Left" Width="345" Margin="10,0,0,0"/>
                         <StackPanel x:Name="panelHostRight4" Height="5000" VerticalAlignment="Top" HorizontalAlignment="Left" Width="345" Margin="10,0"/>
+                        <Image x:Name="loaderHost" Height="100" Width="100" Margin="-734,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" RenderTransformOrigin="0,0" Visibility="Hidden">
+                            <Image.RenderTransform>
+                                <RotateTransform CenterX="50" CenterY="50" />
+                            </Image.RenderTransform>
+                            <Image.Style>
+                                <Style>
+                                    <Style.Triggers>
+                                        <Trigger Property="Image.IsEnabled" Value="True">
+                                            <Trigger.EnterActions>
+                                                <BeginStoryboard>
+                                                    <Storyboard>
+                                                        <DoubleAnimation
+                                    Storyboard.TargetProperty="RenderTransform.Angle"
+                                    From="0"
+                                    To="360"
+                                    Duration="0:0:1"
+                                    RepeatBehavior="Forever" />
+                                                    </Storyboard>
+                                                </BeginStoryboard>
+                                            </Trigger.EnterActions>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Image.Style>
+                        </Image>
                     </DockPanel>
                 </ScrollViewer>
             </TabItem>

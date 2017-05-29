@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Windows;
+﻿using System.Windows;
 
 namespace LivestreamerTwitchViewer
 {
@@ -14,6 +12,14 @@ namespace LivestreamerTwitchViewer
         public Quality()
         {
             InitializeComponent();
+            SetFont();
+        }
+
+        private void SetFont()
+        {
+            sentence.FontFamily = Globals.OldNewspaperTypes;
+            quality.FontFamily = Globals.OldNewspaperTypes;
+            adder.FontFamily = Globals.OldNewspaperTypes;
         }
 
         public string Result

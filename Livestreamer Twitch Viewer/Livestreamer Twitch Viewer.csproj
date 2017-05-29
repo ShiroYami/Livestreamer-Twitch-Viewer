@@ -104,6 +104,7 @@
     <Compile Include="Exceptions\NotPartneredException.cs" />
     <Compile Include="Globals.cs" />
     <Compile Include="Helper.cs" />
+    <Compile Include="KeyBinding.cs" />
     <Compile Include="Models\Host.cs" />
     <Compile Include="Models\HostStream.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -118,7 +119,7 @@
       <DependentUpon>Scroll.xaml</DependentUpon>
     </Compile>
     <Compile Include="SimpleJSON.cs" />
-    <Compile Include="TwitchStatus.cs" />
+    <Compile Include="Models\TwitchStatus.cs" />
     <Compile Include="V5\Models\FollowedStreams.cs" />
     <Compile Include="V5\Models\SearchGames.cs" />
     <Compile Include="V5\Requests.cs" />
@@ -172,6 +173,9 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
+    <None Include="Resources\OldNewspaperTypes.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5">
@@ -195,6 +199,11 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="System\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\load-icon-png-10.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

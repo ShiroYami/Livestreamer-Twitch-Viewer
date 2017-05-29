@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows;
 using MSG = System.Windows.MessageBox;
@@ -7,9 +6,6 @@ using TwitchCSharp.Clients;
 using static System.String;
 using TwitchCSharp.Models;
 using LivestreamerTwitchViewer;
-using System.IO;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 
 namespace Livestreamer_Twitch_Viewer
 {
@@ -22,8 +18,17 @@ namespace Livestreamer_Twitch_Viewer
         {
             InitializeComponent();
             TryGetAuthKey();            
+            SetFont();
         }
 
+        private void SetFont()
+        {
+            button1.FontFamily = Globals.OldNewspaperTypes;
+            button2.FontFamily = Globals.OldNewspaperTypes;
+            button3.FontFamily = Globals.OldNewspaperTypes;
+        }
+
+        #region Loger
         private bool CheckForValidAuthKey()
         {
             bool validLogin = false;
@@ -56,10 +61,39 @@ namespace Livestreamer_Twitch_Viewer
             {
                 string readText = System.IO.File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + "AuthKey.txt");
                 Globals.Authkey = readText;
+                LoginDirect();
             }
         }
 
-        public bool Login(string authkey)
+        private bool LoginDirect()
+        {
+            TwitchAuthenticatedClient tempClient = null;
+            try
+            {
+                tempClient = new TwitchAuthenticatedClient(Globals.ClientId, Globals.Authkey);
+            }
+            catch
+            {
+                MSG.Show("You auth key is invalid", "Try again!", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                return false;
+            }
+            User user = tempClient.GetMyUser();
+            if (user == null || IsNullOrWhiteSpace(user.Name))
+            {
+                return false;
+            }
+            MSG.Show("Connected as " + user.Name, "Success", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+            Globals.Client = tempClient;
+            Globals.UserId = user.Id;
+            Globals.Status.Username = user.Name;
+            Globals.Status.Displayname = user.DisplayName;
+            Scroll scroll = new Scroll();
+            scroll.Show();
+            this.Close();
+            return true;
+        }
+
+        private bool Login(string authkey)
         {
             TwitchAuthenticatedClient tempClient = null;
             try
@@ -72,7 +106,6 @@ namespace Livestreamer_Twitch_Viewer
             }
             User user = tempClient.GetMyUser();
             TwitchList<TwitchCSharp.Models.Stream> followed = tempClient.GetFollowedStreams();
-
             if (user == null || IsNullOrWhiteSpace(user.Name))
             {
                 return false;
@@ -88,17 +121,17 @@ namespace Livestreamer_Twitch_Viewer
             }
             return true;
         }
+        #endregion
 
+        #region Button
         private void button1_Click(object sender, RoutedEventArgs e)
         {
-            CheckForValidAuthKey();
+            CheckForValidAuthKey();   
         }
 
         private void button2_Click(object sender, RoutedEventArgs e)
         {
-            Scroll scroll = new Scroll();
-            scroll.Show();
-            this.Close();
+            LoginDirect();
         }
 
         private void button3_Click(object sender, RoutedEventArgs e)
@@ -106,5 +139,6 @@ namespace Livestreamer_Twitch_Viewer
             string exeToRun = AppDomain.CurrentDomain.BaseDirectory + @"Resources\livestreamer_setup.exe";
             Process.Start(exeToRun);
         }
+        #endregion
     }
 }

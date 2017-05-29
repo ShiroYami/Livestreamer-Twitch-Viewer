@@ -7,8 +7,8 @@
         mc:Ignorable="d"
         Title="Quality" Height="300" Width="300">
     <StackPanel>
-        <TextBlock Text="Add the quality you want..." FontWeight="Bold" HorizontalAlignment="Center" Margin="0,50,0,0"/>
-        <TextBox x:Name="quality" Width="150" Height="30" VerticalAlignment="Top" Margin="0,19.7,0,0"/>
-        <Button x:Name="adder" Content="Add" HorizontalAlignment="Center" VerticalAlignment="Top" Width="100" Height="20" Margin="30,20,0,0" Click="adder_Click" FontWeight="Bold"/>
+        <TextBlock x:Name="sentence" Text="Add the quality you want..." FontWeight="Bold" HorizontalAlignment="Center" Margin="0,50,0,0" FontSize="16"/>
+        <TextBox x:Name="quality" Width="150" Height="35" VerticalAlignment="Top" Margin="0,19.7,0,0" FontWeight="Bold" FontSize="16"/>
+        <Button x:Name="adder" Content="Add" HorizontalAlignment="Center" VerticalAlignment="Top" Width="100" Height="30" Margin="30,20,0,0" Click="adder_Click" FontWeight="Bold" FontSize="16"/>
     </StackPanel>
 </Window>

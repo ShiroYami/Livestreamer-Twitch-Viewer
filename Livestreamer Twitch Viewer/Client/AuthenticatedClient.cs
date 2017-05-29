@@ -1,12 +1,10 @@
 ﻿using LivestreamerTwitchViewer.Models;
-using LivestreamerTwitchViewer.V5;
 using LivestreamerTwitchViewer.V5.Models;
 using SimpleJSON;
 using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
-using TwitchCSharp.Clients;
 using TwitchCSharp.Models;
 
 namespace LivestreamerTwitchViewer.Client
@@ -15,13 +13,8 @@ namespace LivestreamerTwitchViewer.Client
     {
         private static List<HostStream> m_hostStreamsList;
         private Scroll m_scroll;
-        private static int m_totalRequestCompleted;
         private static int m_pageZize = 100;
-
-        public static int stack = 0;
-        public static double t0 = 0;
-        public static double t1;
-        public static double delta;
+        private static int m_totalRequestCompleted;
 
         public static List<HostStream> HostStreamsList { get { return m_hostStreamsList; } }
         public Scroll Scroll { get { return m_scroll; } }
@@ -40,7 +33,6 @@ namespace LivestreamerTwitchViewer.Client
             foreach (UserFollow userFollow in userFollows.Follows)
             {
                 double uid = userFollow.Channel.Id;
-                //Console.WriteLine(userFollow.Channel.Name + "  " + userFollow.Channel.Id);
                 GetHost(uid);
             }
         }
@@ -63,10 +55,6 @@ namespace LivestreamerTwitchViewer.Client
         {            
             string json = e.Result;
             Host host = new Host(JSON.Parse(json));
-            if (t0 == 0)
-            {
-                t0 = DateTime.Now.TimeOfDay.TotalMilliseconds;
-            }
             if (host.Hosts.TargetLogin != null && host.Hosts.TargetLogin != String.Empty)
             {
                 StreamResult str = await TwitchClient.GetStreamAsyncV5(host.Hosts.TargetId.ToString());
@@ -74,15 +62,12 @@ namespace LivestreamerTwitchViewer.Client
                 if (hs != null && hs.Stream != null)
                 {
                     m_hostStreamsList.Add(hs);
-                    Console.WriteLine("stack  " + stack);
                 }
             }
             m_totalRequestCompleted++;
-            //Console.WriteLine("totalRequestCompleted : " + m_totalRequestCompleted);
             if (m_totalRequestCompleted == Globals.TotalFollowed)
             {
                 m_totalRequestCompleted = 0;
-                Console.WriteLine("stackMax : " + stack);
                 Scroll.HostRefresh();
             }
         }

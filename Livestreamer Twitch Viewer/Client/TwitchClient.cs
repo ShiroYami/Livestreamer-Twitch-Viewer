@@ -1,9 +1,6 @@
 ﻿using LivestreamerTwitchViewer.V5;
 using LivestreamerTwitchViewer.V5.Models;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using TwitchCSharp.Models;
 
