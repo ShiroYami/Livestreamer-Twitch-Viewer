@@ -19,6 +19,7 @@ namespace LivestreamerTwitchViewer.Client
         public static List<HostStream> HostStreamsList { get { return m_hostStreamsList; } }
         public Scroll Scroll { get { return m_scroll; } }
         public static int PageSize { get { return m_pageZize; } }
+        public static int TotalRequestCompleted { get { return m_totalRequestCompleted; }set { m_totalRequestCompleted = value; } }
 
         public AuthenticatedClient (Scroll scroll)
         {
@@ -68,6 +69,7 @@ namespace LivestreamerTwitchViewer.Client
             if (m_totalRequestCompleted == Globals.TotalFollowed)
             {
                 m_totalRequestCompleted = 0;
+                Scroll.AllRequestDone = true;
                 Scroll.HostRefresh();
             }
         }

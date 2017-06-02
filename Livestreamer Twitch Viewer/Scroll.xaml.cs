@@ -10,6 +10,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using TwitchCSharp.Models;
 using System.Collections.Generic;
+using System.Windows.Input;
+using System.Threading.Tasks;
 
 namespace LivestreamerTwitchViewer
 {
@@ -23,6 +25,9 @@ namespace LivestreamerTwitchViewer
         private int m_offset = 0;
         private bool m_loadingChannel = false;
         private bool m_loadingHost = false;
+        private bool m_allRequestDone = false;
+
+        public bool AllRequestDone { get { return m_allRequestDone; } set { m_allRequestDone = value; } }
 
         public Scroll()
         {
@@ -86,6 +91,7 @@ namespace LivestreamerTwitchViewer
                     Quality.Items.Add(file.ReadLine());
                 }
                 Quality.SelectedItem = Quality.Items[0];
+                file.Close();
             }
         }
 
@@ -102,6 +108,22 @@ namespace LivestreamerTwitchViewer
             {
                 if (win.Result != null && win.Result != "")
                 {
+                    System.IO.FileStream stream = null;
+                    System.IO.FileInfo file = new System.IO.FileInfo(AppDomain.CurrentDomain.BaseDirectory + "Qualities.txt");
+                
+                    try
+                    {
+                        stream = file.Open(System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.None);
+                    }
+                    catch (System.IO.IOException)
+                    {
+
+                    }
+                    finally
+                    {
+                        if (stream != null)
+                            stream.Close();
+                    }
                     if (!System.IO.File.Exists(AppDomain.CurrentDomain.BaseDirectory + "Qualities.txt"))
                     {
                         System.IO.File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + "Qualities.txt", win.Result + Environment.NewLine);
@@ -277,12 +299,15 @@ namespace LivestreamerTwitchViewer
                     grid.Children.Add(img2);
 
                     // Create Textblock
-                    string viewers = stream.Viewers.ToString();
-                    string quality = stream.VideoHeight.ToString();
+                    string viewers = stream.Viewers + " viewers";
+                    double fps = stream.AverageFps;
+                    string framerate = String.Empty;
+                    if (fps > 50) framerate = "60";
+                    string quality = " - Max quality: " + stream.VideoHeight + "p" + framerate;
                     string hoster = String.Empty;
                     if (p_hosters != null) hoster = "Hosted by " + p_hosters[i] + Environment.NewLine;
                     TextBlock title = new TextBlock();
-                    title.Text = hoster + viewers + " viewers - Max quality: " + quality + "p/" + quality + "p60" + Environment.NewLine + stream.Channel.Status;
+                    title.Text = hoster + viewers + quality + Environment.NewLine + stream.Channel.Status;
                     title.Height = 60;
                     title.FontSize = 15;
                     title.TextWrapping = TextWrapping.Wrap;
@@ -294,6 +319,7 @@ namespace LivestreamerTwitchViewer
                     myButton.Content = stream.Channel.Name;
                     myButton.FontFamily = Globals.OldNewspaperTypes;
                     myButton.Click += new RoutedEventHandler(startLoadedStream_Click);
+                    myButton.MouseRightButtonUp += new MouseButtonEventHandler(CopyPastUsername_RightClick);
 
                     // Add image and button in the right panel.
                     if (p_isHost)
@@ -437,6 +463,16 @@ namespace LivestreamerTwitchViewer
             else
             {
                 System.Windows.Interop.ComponentDispatcher.ThreadIdle -= new EventHandler(LoadHost);
+                await Task.Delay(15000);
+                if (AllRequestDone)
+                {
+                    AllRequestDone = false;
+                }
+                else
+                {
+                    AuthenticatedClient.TotalRequestCompleted = 0;
+                    HostRefresh();
+                }
             }
         }
         #endregion
@@ -459,7 +495,7 @@ namespace LivestreamerTwitchViewer
                 
         private void startLoadedStream_Click(object sender, RoutedEventArgs e)
         {
-            String name = (sender as Button).Content.ToString();
+            string name = (sender as Button).Content.ToString();
             Process process = new Process();
             process.StartInfo.FileName = "cmd.exe";
             // Commande à exécuter
@@ -468,9 +504,15 @@ namespace LivestreamerTwitchViewer
             process.Start();
         }
 
+        private void CopyPastUsername_RightClick(object sender, MouseButtonEventArgs e)
+        {
+            string name = (sender as Button).Content.ToString();
+            textBoxStreamChat.Text = name;
+        }
+
         private void startStream_Click(object sender, RoutedEventArgs e)
         {
-            String name = textBoxStream.Text;
+            string name = textBoxStream.Text;
             Process process = new Process();
             process.StartInfo.FileName = "cmd.exe";
             // Commande à exécuter
@@ -479,6 +521,6 @@ namespace LivestreamerTwitchViewer
             process.Start();
         }
         #endregion
-        
+
     }
 }
