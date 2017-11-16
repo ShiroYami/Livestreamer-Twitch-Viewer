@@ -11,6 +11,7 @@ namespace LivestreamerTwitchViewer.Client
 {
     class AuthenticatedClient
     {
+        //
         private static List<HostStream> m_hostStreamsList;
         private Scroll m_scroll;
         private static int m_pageZize = 100;
